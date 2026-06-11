@@ -10,6 +10,8 @@ python scripts/evaluate_policies.py
 
 The current benchmark is intentionally lightweight. It verifies that the AI pipeline can generate expert data, train a behavior cloning policy and evaluate multiple EMS strategies in the same environment.
 
+![Initial policy comparison](../results/policy_comparison.png)
+
 | Policy | H2 proxy | Final SOH range | Final SOH var | SOC min | SOC max | Power MAE / kW | Start-stop count |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Equal | 0.7204 | 0.2000 | 0.005450 | 0.6500 | 0.6585 | 1.32 | 657.00 |
@@ -23,4 +25,3 @@ The current benchmark is intentionally lightweight. It verifies that the AI pipe
 - The expert-style and BC policies reduce start-stop events compared with equal allocation.
 - The Python environment is designed for fast AI experimentation. The original MATLAB model remains the reference for thesis-grade numerical analysis.
 - The next research step is SAC fine-tuning or constrained RL to improve tracking while preserving fuel economy and low start-stop frequency.
-

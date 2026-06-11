@@ -36,6 +36,7 @@ pip install -r requirements.txt
 python scripts/generate_expert_dataset.py --episodes 40
 python scripts/train_bc.py --epochs 20
 python scripts/evaluate_policies.py
+python scripts/plot_policy_comparison.py
 ```
 
 The comparison table will be written to:
@@ -43,6 +44,12 @@ The comparison table will be written to:
 ```text
 results/policy_comparison.csv
 ```
+
+## Initial Benchmark Figure
+
+The following figure is generated from `results/policy_comparison.csv`:
+
+![Initial policy comparison](results/policy_comparison.png)
 
 ## Optional SAC Training
 
@@ -59,4 +66,3 @@ The SAC path requires `stable-baselines3`. It is separated from the core pipelin
 ## Notes
 
 The Python environment is a lightweight research abstraction of the original MATLAB project. It is intended for AI method development, fast experiments and resume/GitHub demonstration.
-

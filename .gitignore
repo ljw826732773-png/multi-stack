@@ -12,6 +12,7 @@ results/*.pkl
 results/*.npz
 results/*.csv
 !results/policy_comparison.csv
+!results/policy_comparison.png
 !results/README.md
 *.tmp
 .DS_Store
