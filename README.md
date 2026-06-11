@@ -18,6 +18,8 @@ The goal is to compare fuel economy, SOC stability and SOH consistency under mul
 - Evaluated policies using hydrogen proxy, SOH range, SOH variance, SOC range and start-stop count.
 - Kept optional SAC training entrypoint for future reinforcement-learning experiments.
 
+For resume-oriented notes and future work, see [docs/resume_and_roadmap.md](docs/resume_and_roadmap.md).
+
 ## Repository Structure
 
 ```text

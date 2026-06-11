@@ -1,0 +1,40 @@
+# Resume Notes and Roadmap
+
+## Resume Bullets
+
+- Built a Gymnasium-based multi-stack fuel-cell hybrid energy management environment with SOC dynamics, stack SOH degradation, start-stop penalties and ramp-rate constraints.
+- Designed a health-aware HC-MPC-style expert controller for asymmetric stack power allocation and lifetime-aware load shifting.
+- Generated expert demonstrations and trained a PyTorch behavior cloning policy to approximate continuous stack power allocation.
+- Compared equal allocation, sequential loading, expert control and neural policy using hydrogen consumption proxy, SOC range, SOH variance, power tracking error and start-stop count.
+- Prepared an optional SAC reinforcement-learning entrypoint for future policy fine-tuning under multi-objective rewards.
+
+## Interview Story
+
+This project starts from a conventional multi-stack fuel-cell EMS simulation and extends it into an AI control platform. The original control objective is not only to meet vehicle power demand, but also to reduce hydrogen consumption and improve lifetime consistency among stacks with different initial SOH.
+
+The AI extension uses the HC-MPC-style controller as an expert. A neural policy first learns the expert state-action mapping through behavior cloning, which gives a stable initialization. Reinforcement learning can then be used as a second stage to fine-tune the policy for better trade-offs among hydrogen economy, SOC stability and SOH balancing.
+
+## Near-Term Roadmap
+
+1. **MATLAB-to-Python data bridge**
+   - Export real HC-MPC trajectories from MATLAB.
+   - Train BC with thesis-grade expert data instead of the lightweight Python expert.
+
+2. **SAC fine-tuning**
+   - Initialize policy around the BC solution.
+   - Penalize constraint violations more strongly.
+   - Compare BC and SAC under the same random driving cycles.
+
+3. **Constrained RL**
+   - Add safety layers for SOC and stack power limits.
+   - Evaluate whether constrained RL improves power tracking without increasing start-stop events.
+
+4. **Multi-agent extension**
+   - Treat each stack as an agent.
+   - Use centralized training and decentralized execution.
+   - Study whether cooperative policies improve SOH consistency.
+
+5. **Richer result reporting**
+   - Add time-series plots for SOC, stack power and SOH.
+   - Add inference-time comparison between expert optimization and neural policy.
+
