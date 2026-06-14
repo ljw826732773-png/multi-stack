@@ -27,3 +27,4 @@ Thumbs.db
 !results/safety_filter_sweep.png
 !results/trajectory_comparison_urban.csv
 !results/trajectory_comparison_urban.png
+!results/dagger_training_history.csv

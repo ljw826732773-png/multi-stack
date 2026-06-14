@@ -13,7 +13,8 @@ Current strategy ladder:
 3. **HC-MPC-style expert**: mimics the thesis control logic with demand smoothing, SOC feedback and health-aware asymmetric allocation.
 4. **Behavior cloning neural policy**: learns the expert state-action mapping with PyTorch.
 5. **Safety-filtered neural policy**: wraps the learned policy with SOC and stack-derating constraints.
-6. **Optional SAC fine-tuning**: a reinforcement-learning entrypoint for future improvement.
+6. **DAgger imitation learning**: reduces behavior-cloning distribution shift through learner-state data aggregation.
+7. **Optional SAC fine-tuning**: a reinforcement-learning entrypoint for future improvement.
 
 ## Highlights
 
@@ -22,6 +23,7 @@ Current strategy ladder:
 - Generated HC-MPC-style expert demonstrations for supervised imitation learning.
 - Trained a neural policy to approximate stack power allocation.
 - Added a safety-filtered neural controller that improves SOC robustness and power tracking without retraining.
+- Added a DAgger-style data aggregation loop for deeper imitation-learning research.
 - Added a sensitivity study for expert-controller parameters: filter coefficient, SOC feedback gain and health-aware allocation exponent.
 - Evaluated strategies using hydrogen proxy, SOC range, SOH variance, tracking error and start-stop count.
 - Included selected MATLAB files from the original thesis simulation for traceability.
@@ -48,6 +50,7 @@ The neural policy is trained through behavior cloning:
 
 ```text
 HC-MPC-style expert trajectories -> supervised dataset -> PyTorch MLP policy
+learner rollouts -> expert relabeling -> aggregated DAgger dataset
 ```
 
 This creates a stable AI baseline before adding SAC or constrained RL.
@@ -80,6 +83,7 @@ python scripts/evaluate_drive_cycles.py
 python scripts/generate_experiment_report.py
 python scripts/safety_filter_sweep.py
 python scripts/plot_policy_trajectories.py --cycle urban
+python scripts/train_dagger.py
 ```
 
 Run the automated checks:
@@ -103,6 +107,7 @@ results/safety_filter_sweep.csv
 results/safety_filter_sweep.png
 results/trajectory_comparison_urban.csv
 results/trajectory_comparison_urban.png
+results/dagger_training_history.csv
 ```
 
 ## Initial Benchmark
@@ -135,6 +140,7 @@ Detailed notes:
 - [Safety-filtered neural policy](docs/safety_layer.md)
 - [Safety filter parameter sweep](docs/safety_filter_sweep.md)
 - [Policy trajectory visualization](docs/trajectory_visualization.md)
+- [DAgger imitation learning](docs/dagger_imitation.md)
 - [Methodology](docs/methodology.md)
 - [Resume and roadmap](docs/resume_and_roadmap.md)
 
