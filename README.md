@@ -76,6 +76,7 @@ python scripts/evaluate_policies.py
 python scripts/plot_policy_comparison.py
 python scripts/sensitivity_experiment.py
 python scripts/evaluate_drive_cycles.py
+python scripts/generate_experiment_report.py
 ```
 
 Outputs:
@@ -87,6 +88,8 @@ results/sensitivity_study.csv
 results/sensitivity_study.png
 results/drive_cycle_benchmark.csv
 results/drive_cycle_benchmark.png
+results/experiment_report.md
+results/pareto_tradeoff.png
 ```
 
 ## Initial Benchmark
@@ -125,6 +128,14 @@ Detailed notes:
 The project also evaluates each policy on representative urban, highway and mixed demand profiles to check robustness beyond a single random cycle.
 
 ![Cross-cycle benchmark](results/drive_cycle_benchmark.png)
+
+## Experiment Report
+
+The repository can automatically summarize the latest benchmark CSV files into a leaderboard and trade-off map.
+
+![Policy trade-off map](results/pareto_tradeoff.png)
+
+See [results/experiment_report.md](results/experiment_report.md) for the generated report.
 
 ## Optional SAC Training
 

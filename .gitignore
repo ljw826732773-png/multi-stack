@@ -21,3 +21,5 @@ results/*.csv
 Thumbs.db
 !results/drive_cycle_benchmark.csv
 !results/drive_cycle_benchmark.png
+!results/experiment_report.md
+!results/pareto_tradeoff.png
