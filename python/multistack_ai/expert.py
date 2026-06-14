@@ -11,10 +11,19 @@ class HealthAwareExpert:
     lightweight so it can generate expert data without MATLAB or quadprog.
     """
 
-    def __init__(self, p_nom: float = 100.0, alpha: float = 0.06, soc_ref: float = 0.60):
+    def __init__(
+        self,
+        p_nom: float = 100.0,
+        alpha: float = 0.06,
+        soc_ref: float = 0.60,
+        soc_gain: float = 180.0,
+        health_power: float = 2.2,
+    ):
         self.p_nom = p_nom
         self.alpha = alpha
         self.soc_ref = soc_ref
+        self.soc_gain = soc_gain
+        self.health_power = health_power
         self.filtered = 0.0
 
     def reset(self):
@@ -27,11 +36,11 @@ class HealthAwareExpert:
         prev_p = np.asarray(obs[6:10], dtype=np.float64) * self.p_nom
 
         self.filtered = (1.0 - self.alpha) * self.filtered + self.alpha * max(p_dem, 0.0)
-        soc_comp = -180.0 * (soc - self.soc_ref)
+        soc_comp = -self.soc_gain * (soc - self.soc_ref)
         p_fc = float(np.clip(self.filtered + soc_comp, 0.0, 4 * self.p_nom))
 
         # Allocate more load to healthier stacks while derating weak stacks.
-        weights = np.maximum(soh - 0.55, 0.05) ** 2.2
+        weights = np.maximum(soh - 0.55, 0.05) ** self.health_power
         limits = self.p_nom * np.clip(0.35 + 0.75 * soh, 0.20, 1.00)
         raw = p_fc * weights / max(np.sum(weights), 1e-9)
         p = np.minimum(raw, limits)
@@ -50,4 +59,3 @@ class HealthAwareExpert:
         p = np.clip(p, prev_p - 45.0, prev_p + 45.0)
         p = np.clip(p, 0.0, self.p_nom)
         return (p / self.p_nom).astype(np.float32)
-

@@ -3,45 +3,26 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import torch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "python"))
 
 from multistack_ai import HealthAwareExpert
-from multistack_ai.bc import BCPolicy
 from multistack_ai.evaluate import rollout
+from multistack_ai.policies import EqualPolicy, SequentialPolicy, TorchPolicy
 
 
-class EqualPolicy:
-    def act(self, obs):
-        p_dem = max(float(obs[0] * 300.0), 0.0)
-        return np.full(4, np.clip(p_dem / 4.0 / 100.0, 0.0, 1.0), dtype=np.float32)
-
-
-class SequentialPolicy:
-    def act(self, obs):
-        p_dem = max(float(obs[0] * 300.0), 0.0)
-        a = np.zeros(4, dtype=np.float32)
-        rem = p_dem
-        for i in range(4):
-            p = min(100.0, rem)
-            a[i] = p / 100.0
-            rem -= p
-            if rem <= 0:
-                break
-        return a
-
-
-class TorchPolicy:
-    def __init__(self, path):
-        self.model = BCPolicy()
-        ckpt = torch.load(path, map_location="cpu")
-        self.model.load_state_dict(ckpt["state_dict"])
-        self.model.eval()
-
-    def act(self, obs):
-        return self.model.act(obs).astype(np.float32)
+class _PolicySuite:
+    @staticmethod
+    def build(model_path):
+        policies = {
+            "Equal": EqualPolicy(),
+            "Sequential": SequentialPolicy(),
+            "HC-MPC-style Expert": HealthAwareExpert(),
+        }
+        if model_path.exists():
+            policies["BC Neural Policy"] = TorchPolicy(model_path)
+        return policies
 
 
 def aggregate(rows):
@@ -50,14 +31,7 @@ def aggregate(rows):
 
 
 def main():
-    policies = {
-        "Equal": EqualPolicy(),
-        "Sequential": SequentialPolicy(),
-        "HC-MPC-style Expert": HealthAwareExpert(),
-    }
-    model_path = ROOT / "results" / "bc_policy.pt"
-    if model_path.exists():
-        policies["BC Neural Policy"] = TorchPolicy(model_path)
+    policies = _PolicySuite.build(ROOT / "results" / "bc_policy.pt")
 
     out = ROOT / "results" / "policy_comparison.csv"
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -78,4 +52,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

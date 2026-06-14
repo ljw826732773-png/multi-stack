@@ -12,8 +12,12 @@ results/*.pkl
 results/*.npz
 results/*.csv
 !results/policy_comparison.csv
+!results/sensitivity_study.csv
 !results/policy_comparison.png
+!results/sensitivity_study.png
 !results/README.md
 *.tmp
 .DS_Store
 Thumbs.db
+!results/drive_cycle_benchmark.csv
+!results/drive_cycle_benchmark.png
