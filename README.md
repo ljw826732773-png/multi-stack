@@ -12,7 +12,8 @@ Current strategy ladder:
 2. **Sequential loading**: activates stacks in a fixed order.
 3. **HC-MPC-style expert**: mimics the thesis control logic with demand smoothing, SOC feedback and health-aware asymmetric allocation.
 4. **Behavior cloning neural policy**: learns the expert state-action mapping with PyTorch.
-5. **Optional SAC fine-tuning**: a reinforcement-learning entrypoint for future improvement.
+5. **Safety-filtered neural policy**: wraps the learned policy with SOC and stack-derating constraints.
+6. **Optional SAC fine-tuning**: a reinforcement-learning entrypoint for future improvement.
 
 ## Highlights
 
@@ -20,6 +21,7 @@ Current strategy ladder:
 - Modeled SOC dynamics, stack SOH degradation, start-stop penalty, ramp-rate limits and stack derating.
 - Generated HC-MPC-style expert demonstrations for supervised imitation learning.
 - Trained a neural policy to approximate stack power allocation.
+- Added a safety-filtered neural controller that improves SOC robustness and power tracking without retraining.
 - Added a sensitivity study for expert-controller parameters: filter coefficient, SOC feedback gain and health-aware allocation exponent.
 - Evaluated strategies using hydrogen proxy, SOC range, SOH variance, tracking error and start-stop count.
 - Included selected MATLAB files from the original thesis simulation for traceability.
@@ -32,7 +34,7 @@ Driving demand + SOC + stack SOH + previous stack power
                          v
               Multi-stack EMS policy
       ------------------------------------------------
-      Equal | Sequential | HC-MPC-style Expert | BC NN
+      Equal | Sequential | HC-MPC Expert | BC NN | Safe BC
       ------------------------------------------------
                          |
                          v
@@ -98,9 +100,10 @@ The current benchmark verifies that the full AI pipeline can run end-to-end. It 
 | Equal | 0.7204 | 657.00 | 1.32 | 0.6500 |
 | Sequential | 0.7131 | 174.88 | 1.96 | 0.6496 |
 | HC-MPC-style Expert | 0.6174 | 57.50 | 14.57 | 0.6194 |
-| BC Neural Policy | 0.5555 | 54.63 | 16.05 | 0.5973 |
+| BC Neural Policy | 0.5555 | 54.62 | 16.05 | 0.5973 |
+| Safety-Filtered BC | 0.6301 | 111.38 | 11.84 | 0.6255 |
 
-Interpretation: the expert-style and BC policies reduce start-stop events and hydrogen proxy in this lightweight environment. The next step is to improve tracking through SAC fine-tuning or a safety-constrained RL layer.
+Interpretation: the raw BC policy achieves the lowest hydrogen proxy but leaves more demand to the battery. The safety-filtered BC policy raises SOC margin and reduces tracking error while keeping start-stop count below the sequential strategy, showing a practical trade-off between learning and engineering constraints.
 
 ## Project Progress
 
@@ -113,6 +116,7 @@ Detailed notes:
 - [Experiment design](docs/experiment_design.md)
 - [Sensitivity study](docs/sensitivity_study.md)
 - [Cross-cycle benchmark](docs/cross_cycle_benchmark.md)
+- [Safety-filtered neural policy](docs/safety_layer.md)
 - [Methodology](docs/methodology.md)
 - [Resume and roadmap](docs/resume_and_roadmap.md)
 
@@ -134,12 +138,12 @@ The SAC path requires `stable-baselines3`. It is separated from the core pipelin
 
 **AI-based energy management for multi-stack fuel-cell hybrid vehicles**
 
-Built a Gymnasium simulation platform for a four-stack fuel-cell/battery hybrid system, implemented rule-based and HC-MPC-style expert baselines, generated expert demonstrations, trained a PyTorch behavior-cloning policy, and evaluated hydrogen consumption proxy, SOC stability, power tracking and start-stop behavior. Extended the original MATLAB thesis simulation into a reproducible AI research project with benchmark plots and a parameter sensitivity study.
+Built a Gymnasium simulation platform for a four-stack fuel-cell/battery hybrid system, implemented rule-based and HC-MPC-style expert baselines, generated expert demonstrations, trained a PyTorch behavior-cloning policy, and added a safety-filtered neural controller for SOC-aware action correction. Evaluated hydrogen consumption proxy, SOC stability, power tracking and start-stop behavior across random and representative driving cycles.
 
 ## Roadmap
 
 - Replace the synthetic demand generator with standardized driving-cycle loaders.
-- Add constrained SAC/DDPG fine-tuning and compare against behavior cloning.
+- Add constrained SAC/DDPG fine-tuning and compare against behavior cloning and safety-filtered BC.
 - Add multi-objective Pareto analysis for hydrogen economy, SOC safety and SOH consistency.
 - Connect the Python AI policy back to the MATLAB simulation for higher-fidelity validation.
 

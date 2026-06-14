@@ -16,7 +16,7 @@ OUT_CSV = ROOT / "results" / "drive_cycle_benchmark.csv"
 OUT_PNG = ROOT / "results" / "drive_cycle_benchmark.png"
 
 
-PALETTE = [(82, 138, 191), (226, 120, 54), (52, 149, 101), (132, 99, 170)]
+PALETTE = [(82, 138, 191), (226, 120, 54), (52, 149, 101), (132, 99, 170), (213, 88, 93)]
 
 
 def font(size, bold=False):
@@ -91,12 +91,12 @@ def draw_grouped_bars(draw, records, metric, box, title):
 
 
 def draw_global_legend(draw):
-    labels = ["Equal", "Sequential", "Expert", "BC Neural Policy"]
+    labels = ["Equal", "Sequential", "Expert", "BC Neural", "Safety BC"]
     lx = 980
     for i, label in enumerate(labels):
-        y = 34 + i * 20
-        draw.rounded_rectangle((lx, y, lx + 14, y + 14), radius=3, fill=PALETTE[i])
-        draw.text((lx + 22, y - 5), label, fill=(226, 238, 248), font=font(15))
+        y = 25 + i * 18
+        draw.rounded_rectangle((lx, y, lx + 13, y + 13), radius=3, fill=PALETTE[i])
+        draw.text((lx + 20, y - 5), label, fill=(226, 238, 248), font=font(14))
 
 
 def plot(records):

@@ -7,6 +7,7 @@ import torch
 
 from .bc import BCPolicy
 from .expert import HealthAwareExpert
+from .safety import SafetyFilteredPolicy
 
 
 class EqualPolicy:
@@ -47,5 +48,7 @@ def default_policy_suite(model_path: str | Path | None = None):
         "HC-MPC-style Expert": HealthAwareExpert(),
     }
     if model_path is not None and Path(model_path).exists():
-        policies["BC Neural Policy"] = TorchPolicy(model_path)
+        bc_policy = TorchPolicy(model_path)
+        policies["BC Neural Policy"] = bc_policy
+        policies["Safety-Filtered BC"] = SafetyFilteredPolicy(TorchPolicy(model_path))
     return policies

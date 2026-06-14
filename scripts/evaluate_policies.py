@@ -7,22 +7,8 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "python"))
 
-from multistack_ai import HealthAwareExpert
 from multistack_ai.evaluate import rollout
-from multistack_ai.policies import EqualPolicy, SequentialPolicy, TorchPolicy
-
-
-class _PolicySuite:
-    @staticmethod
-    def build(model_path):
-        policies = {
-            "Equal": EqualPolicy(),
-            "Sequential": SequentialPolicy(),
-            "HC-MPC-style Expert": HealthAwareExpert(),
-        }
-        if model_path.exists():
-            policies["BC Neural Policy"] = TorchPolicy(model_path)
-        return policies
+from multistack_ai.policies import default_policy_suite
 
 
 def aggregate(rows):
@@ -31,7 +17,7 @@ def aggregate(rows):
 
 
 def main():
-    policies = _PolicySuite.build(ROOT / "results" / "bc_policy.pt")
+    policies = default_policy_suite(ROOT / "results" / "bc_policy.pt")
 
     out = ROOT / "results" / "policy_comparison.csv"
     out.parent.mkdir(parents=True, exist_ok=True)
