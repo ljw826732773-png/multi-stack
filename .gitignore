@@ -25,3 +25,5 @@ Thumbs.db
 !results/pareto_tradeoff.png
 !results/safety_filter_sweep.csv
 !results/safety_filter_sweep.png
+!results/trajectory_comparison_urban.csv
+!results/trajectory_comparison_urban.png

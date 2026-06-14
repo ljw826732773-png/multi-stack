@@ -79,6 +79,7 @@ python scripts/sensitivity_experiment.py
 python scripts/evaluate_drive_cycles.py
 python scripts/generate_experiment_report.py
 python scripts/safety_filter_sweep.py
+python scripts/plot_policy_trajectories.py --cycle urban
 ```
 
 Run the automated checks:
@@ -100,6 +101,8 @@ results/experiment_report.md
 results/pareto_tradeoff.png
 results/safety_filter_sweep.csv
 results/safety_filter_sweep.png
+results/trajectory_comparison_urban.csv
+results/trajectory_comparison_urban.png
 ```
 
 ## Initial Benchmark
@@ -131,6 +134,7 @@ Detailed notes:
 - [Cross-cycle benchmark](docs/cross_cycle_benchmark.md)
 - [Safety-filtered neural policy](docs/safety_layer.md)
 - [Safety filter parameter sweep](docs/safety_filter_sweep.md)
+- [Policy trajectory visualization](docs/trajectory_visualization.md)
 - [Methodology](docs/methodology.md)
 - [Resume and roadmap](docs/resume_and_roadmap.md)
 
@@ -153,6 +157,12 @@ See [results/experiment_report.md](results/experiment_report.md) for the generat
 The safety layer includes a parameter sweep for the target smoothing coefficient, showing the trade-off between tracking correction and start-stop pressure.
 
 ![Safety filter sweep](results/safety_filter_sweep.png)
+
+## Trajectory Visualization
+
+The project also generates time-domain policy traces for explaining how the raw BC and safety-filtered BC controllers behave during a driving cycle.
+
+![Policy trajectory comparison](results/trajectory_comparison_urban.png)
 
 ## Engineering Quality
 
