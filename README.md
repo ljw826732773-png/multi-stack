@@ -78,6 +78,7 @@ python scripts/plot_policy_comparison.py
 python scripts/sensitivity_experiment.py
 python scripts/evaluate_drive_cycles.py
 python scripts/generate_experiment_report.py
+python scripts/safety_filter_sweep.py
 ```
 
 Run the automated checks:
@@ -97,6 +98,8 @@ results/drive_cycle_benchmark.csv
 results/drive_cycle_benchmark.png
 results/experiment_report.md
 results/pareto_tradeoff.png
+results/safety_filter_sweep.csv
+results/safety_filter_sweep.png
 ```
 
 ## Initial Benchmark
@@ -127,6 +130,7 @@ Detailed notes:
 - [Sensitivity study](docs/sensitivity_study.md)
 - [Cross-cycle benchmark](docs/cross_cycle_benchmark.md)
 - [Safety-filtered neural policy](docs/safety_layer.md)
+- [Safety filter parameter sweep](docs/safety_filter_sweep.md)
 - [Methodology](docs/methodology.md)
 - [Resume and roadmap](docs/resume_and_roadmap.md)
 
@@ -143,6 +147,12 @@ The repository can automatically summarize the latest benchmark CSV files into a
 ![Policy trade-off map](results/pareto_tradeoff.png)
 
 See [results/experiment_report.md](results/experiment_report.md) for the generated report.
+
+## Safety Filter Sweep
+
+The safety layer includes a parameter sweep for the target smoothing coefficient, showing the trade-off between tracking correction and start-stop pressure.
+
+![Safety filter sweep](results/safety_filter_sweep.png)
 
 ## Engineering Quality
 

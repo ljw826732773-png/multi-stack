@@ -23,3 +23,5 @@ Thumbs.db
 !results/drive_cycle_benchmark.png
 !results/experiment_report.md
 !results/pareto_tradeoff.png
+!results/safety_filter_sweep.csv
+!results/safety_filter_sweep.png
