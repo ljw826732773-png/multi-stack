@@ -7,3 +7,4 @@ tqdm
 matplotlib
 stable-baselines3
 pillow
+pytest

@@ -123,9 +123,11 @@ class MultiStackFuelCellEnv(gym.Env):
         base = 35 + 30 * np.sin(2 * np.pi * t / 420) + 15 * np.sin(2 * np.pi * t / 95)
         noise = self.rng.normal(0, 12, size=self.cfg.episode_len)
         spikes = np.zeros_like(base)
-        spike_idx = self.rng.choice(self.cfg.episode_len, size=max(8, self.cfg.episode_len // 65), replace=False)
+        spike_count = min(self.cfg.episode_len, max(1, self.cfg.episode_len // 65))
+        spike_idx = self.rng.choice(self.cfg.episode_len, size=spike_count, replace=False)
         spikes[spike_idx] = self.rng.uniform(45, 160, size=len(spike_idx))
-        regen_idx = self.rng.choice(self.cfg.episode_len, size=max(5, self.cfg.episode_len // 90), replace=False)
+        regen_count = min(self.cfg.episode_len, max(1, self.cfg.episode_len // 90))
+        regen_idx = self.rng.choice(self.cfg.episode_len, size=regen_count, replace=False)
         spikes[regen_idx] -= self.rng.uniform(35, 110, size=len(regen_idx))
         demand = base + noise + spikes
         return np.clip(demand, -120, 280).astype(np.float64)
@@ -150,4 +152,3 @@ class MultiStackFuelCellEnv(gym.Env):
         # U-shaped specific consumption approximation.
         specific = 0.055 + 0.10 / (p_fc_kw + 8.0) + 0.000035 * max(p_fc_kw - 190.0, 0.0) ** 2 / 100.0
         return specific * p_fc_kw / 3600.0
-

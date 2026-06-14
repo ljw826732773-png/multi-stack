@@ -58,6 +58,7 @@ This creates a stable AI baseline before adding SAC or constrained RL.
 multi-stack/
 |-- python/multistack_ai/   # environment, expert policy, neural policy
 |-- scripts/                # dataset generation, training, evaluation, plotting
+|-- tests/                  # unit tests for environment, policies and reports
 |-- matlab/                 # selected original MATLAB simulation files
 |-- docs/                   # method notes, experiment design, benchmark notes, roadmap
 |-- results/                # benchmark tables and generated comparison figures
@@ -77,6 +78,12 @@ python scripts/plot_policy_comparison.py
 python scripts/sensitivity_experiment.py
 python scripts/evaluate_drive_cycles.py
 python scripts/generate_experiment_report.py
+```
+
+Run the automated checks:
+
+```bash
+pytest -q
 ```
 
 Outputs:
@@ -136,6 +143,10 @@ The repository can automatically summarize the latest benchmark CSV files into a
 ![Policy trade-off map](results/pareto_tradeoff.png)
 
 See [results/experiment_report.md](results/experiment_report.md) for the generated report.
+
+## Engineering Quality
+
+The project includes unit tests and a GitHub Actions workflow. The checks cover environment stepping, deterministic driving-cycle generation, safety-filtered policy behavior and report generation.
 
 ## Optional SAC Training
 
