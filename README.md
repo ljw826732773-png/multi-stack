@@ -86,6 +86,10 @@ python scripts/plot_policy_trajectories.py --cycle urban
 python scripts/train_dagger.py
 ```
 
+If `results/dagger_policy.pt` exists after running `train_dagger.py`, the evaluation scripts automatically include DAgger and Safety-Filtered DAgger in the comparison.
+
+The first DAgger integration is intentionally reported transparently: it reduces supervised imitation loss, while closed-loop performance still depends on the safety layer and rollout schedule. This keeps the project closer to a real research iteration instead of only showing cherry-picked improvements.
+
 Run the automated checks:
 
 ```bash

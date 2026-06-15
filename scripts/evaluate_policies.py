@@ -17,7 +17,10 @@ def aggregate(rows):
 
 
 def main():
-    policies = default_policy_suite(ROOT / "results" / "bc_policy.pt")
+    policies = default_policy_suite(
+        ROOT / "results" / "bc_policy.pt",
+        ROOT / "results" / "dagger_policy.pt",
+    )
 
     out = ROOT / "results" / "policy_comparison.csv"
     out.parent.mkdir(parents=True, exist_ok=True)

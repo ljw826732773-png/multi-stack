@@ -105,13 +105,23 @@ def draw_pareto(rows):
     draw.text((575, 855), "Hydrogen consumption proxy / kg", fill=(35, 45, 58), font=font(20, True))
     draw.text((20, 420), "Power MAE / kW", fill=(35, 45, 58), font=font(20, True))
 
-    palette = [(82, 138, 191), (226, 120, 54), (52, 149, 101), (132, 99, 170), (213, 88, 93)]
+    palette = [
+        (82, 138, 191),
+        (226, 120, 54),
+        (52, 149, 101),
+        (132, 99, 170),
+        (213, 88, 93),
+        (50, 171, 168),
+        (166, 113, 44),
+    ]
     label_offsets = {
         "Equal": (18, 12),
         "Sequential": (18, -20),
         "BC Neural Policy": (20, -8),
         "HC-MPC-style Expert": (20, -10),
         "Safety-Filtered BC": (20, -10),
+        "DAgger Policy": (20, -10),
+        "Safety-Filtered DAgger": (20, 12),
     }
     for idx, row in enumerate(rows):
         x = x0 + (to_float(row, "h2_proxy_kg") - xmin) / (xmax - xmin) * (x1 - x0)

@@ -41,7 +41,10 @@ class TorchPolicy:
         return self.model.act(obs).astype(np.float32)
 
 
-def default_policy_suite(model_path: str | Path | None = None):
+def default_policy_suite(
+    model_path: str | Path | None = None,
+    dagger_model_path: str | Path | None = None,
+):
     policies = {
         "Equal": EqualPolicy(),
         "Sequential": SequentialPolicy(),
@@ -51,4 +54,7 @@ def default_policy_suite(model_path: str | Path | None = None):
         bc_policy = TorchPolicy(model_path)
         policies["BC Neural Policy"] = bc_policy
         policies["Safety-Filtered BC"] = SafetyFilteredPolicy(TorchPolicy(model_path))
+    if dagger_model_path is not None and Path(dagger_model_path).exists():
+        policies["DAgger Policy"] = TorchPolicy(dagger_model_path)
+        policies["Safety-Filtered DAgger"] = SafetyFilteredPolicy(TorchPolicy(dagger_model_path))
     return policies

@@ -31,6 +31,8 @@ def short_name(name: str) -> str:
         "HC-MPC-style Expert": "HC-MPC\nExpert",
         "BC Neural Policy": "BC Neural\nPolicy",
         "Safety-Filtered BC": "Safety\nFiltered BC",
+        "DAgger Policy": "DAgger\nPolicy",
+        "Safety-Filtered DAgger": "Safety\nDAgger",
     }
     return mapping.get(name, name)
 

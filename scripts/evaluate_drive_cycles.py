@@ -16,7 +16,15 @@ OUT_CSV = ROOT / "results" / "drive_cycle_benchmark.csv"
 OUT_PNG = ROOT / "results" / "drive_cycle_benchmark.png"
 
 
-PALETTE = [(82, 138, 191), (226, 120, 54), (52, 149, 101), (132, 99, 170), (213, 88, 93)]
+PALETTE = [
+    (82, 138, 191),
+    (226, 120, 54),
+    (52, 149, 101),
+    (132, 99, 170),
+    (213, 88, 93),
+    (50, 171, 168),
+    (166, 113, 44),
+]
 
 
 def font(size, bold=False):
@@ -45,7 +53,10 @@ def run_policy_on_cycle(policy, demand, seed=3100):
 
 
 def evaluate():
-    policies = default_policy_suite(ROOT / "results" / "bc_policy.pt")
+    policies = default_policy_suite(
+        ROOT / "results" / "bc_policy.pt",
+        ROOT / "results" / "dagger_policy.pt",
+    )
     records = []
     for cycle in available_cycles():
         demand = make_cycle_demand(cycle)
@@ -91,12 +102,12 @@ def draw_grouped_bars(draw, records, metric, box, title):
 
 
 def draw_global_legend(draw):
-    labels = ["Equal", "Sequential", "Expert", "BC Neural", "Safety BC"]
+    labels = ["Equal", "Sequential", "Expert", "BC Neural", "Safety BC", "DAgger", "Safety DAgger"]
     lx = 980
     for i, label in enumerate(labels):
-        y = 25 + i * 18
+        y = 14 + i * 15
         draw.rounded_rectangle((lx, y, lx + 13, y + 13), radius=3, fill=PALETTE[i])
-        draw.text((lx + 20, y - 5), label, fill=(226, 238, 248), font=font(14))
+        draw.text((lx + 20, y - 4), label, fill=(226, 238, 248), font=font(13))
 
 
 def plot(records):

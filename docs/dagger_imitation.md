@@ -28,3 +28,9 @@ results/dagger_training_history.csv
 ## Why This Is Deeper Than A Metric Add-on
 
 DAgger changes the training process itself. Instead of only measuring the policy after training, it actively improves the state distribution used for learning. This makes the AI part of the project more defensible for research and internship discussion, because it addresses a real limitation of vanilla supervised imitation learning.
+
+## Current Finding
+
+The lightweight DAgger model is now included in the same evaluation pipeline as the rule-based, expert, BC and safety-filtered policies. The current small-scale DAgger setting reduces the validation imitation loss, but the raw DAgger policy does not yet dominate the raw BC policy in closed-loop control. This is an important research result rather than a failure: lower supervised loss is not guaranteed to produce better EMS behavior when the policy is evaluated through system dynamics.
+
+The safety-filtered DAgger variant is therefore included as a more practical hybrid controller. It preserves the DAgger training pathway while using the safety layer to correct SOC and fuel-cell target errors during deployment. Future work should tune the DAgger rollout schedule, increase expert-query diversity and compare mixture policies where the expert and learner share control during early aggregation rounds.
