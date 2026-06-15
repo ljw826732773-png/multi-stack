@@ -33,4 +33,4 @@ The sweep provides a practical bridge between the original thesis control design
 2. As an ablation study to explain which part of the expert policy matters most.
 3. As a dataset-generation knob for behavior cloning, because different expert settings can produce different driving styles.
 
-The current results should be treated as an initial engineering benchmark. The next step is to run the same sweep on real driving-cycle profiles and report mean and standard deviation across more seeds.
+The current sweep is still an initial engineering benchmark. The project now uses official EPA drive-cycle files for cross-cycle evaluation, so the next deeper step is to repeat the parameter sweep on EPA LA92/US06/HWFET and report mean plus standard deviation across more random seeds.

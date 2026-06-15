@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "python"))
 
-from multistack_ai import EnvConfig, MultiStackFuelCellEnv, make_cycle_demand
+from multistack_ai import EnvConfig, MultiStackFuelCellEnv, available_cycles, cycle_label, make_cycle_demand
 from multistack_ai.policies import TorchPolicy
 from multistack_ai.safety import SafetyFilteredPolicy
 
@@ -147,7 +147,7 @@ def plot(path, cycle, raw_history, safe_history):
     img = Image.new("RGB", (1700, 1320), (246, 249, 252))
     draw = ImageDraw.Draw(img)
     draw.rectangle((0, 0, 1700, 118), fill=(18, 62, 92))
-    draw.text((55, 28), f"Policy Trajectory Comparison: {cycle.title()} Cycle", fill="white", font=font(40, True))
+    draw.text((55, 28), f"Policy Trajectory Comparison: {cycle_label(cycle)}", fill="white", font=font(40, True))
     draw.text((58, 80), "Raw behavior cloning vs. safety-filtered neural energy management", fill=(214, 232, 245), font=font(21))
 
     draw_panel(
@@ -203,9 +203,9 @@ def plot(path, cycle, raw_history, safe_history):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cycle", default="urban", choices=["urban", "highway", "mixed"])
-    parser.add_argument("--out", type=Path, default=ROOT / "results" / "trajectory_comparison_urban.png")
-    parser.add_argument("--csv", type=Path, default=ROOT / "results" / "trajectory_comparison_urban.csv")
+    parser.add_argument("--cycle", default="epa_la92", choices=available_cycles() + ["urban", "highway", "mixed"])
+    parser.add_argument("--out", type=Path, default=ROOT / "results" / "trajectory_comparison_epa_la92.png")
+    parser.add_argument("--csv", type=Path, default=ROOT / "results" / "trajectory_comparison_epa_la92.csv")
     args = parser.parse_args()
 
     model_path = ROOT / "results" / "bc_policy.pt"

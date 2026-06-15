@@ -24,6 +24,7 @@ Current strategy ladder:
 - Trained a neural policy to approximate stack power allocation.
 - Added a safety-filtered neural controller that improves SOC robustness and power tracking without retraining.
 - Added a DAgger-style data aggregation loop for deeper imitation-learning research.
+- Replaced the default synthetic cycle benchmark with official EPA drive schedules, led by LA92 Class 3 Heavy-Duty.
 - Added a sensitivity study for expert-controller parameters: filter coefficient, SOC feedback gain and health-aware allocation exponent.
 - Evaluated strategies using hydrogen proxy, SOC range, SOH variance, tracking error and start-stop count.
 - Included selected MATLAB files from the original thesis simulation for traceability.
@@ -63,6 +64,7 @@ multi-stack/
 |-- scripts/                # dataset generation, training, evaluation, plotting
 |-- tests/                  # unit tests for environment, policies and reports
 |-- matlab/                 # selected original MATLAB simulation files
+|-- data/epa_cycles/        # official EPA drive-cycle text files
 |-- docs/                   # method notes, experiment design, benchmark notes, roadmap
 |-- results/                # benchmark tables and generated comparison figures
 |-- README.md
@@ -82,7 +84,7 @@ python scripts/sensitivity_experiment.py
 python scripts/evaluate_drive_cycles.py
 python scripts/generate_experiment_report.py
 python scripts/safety_filter_sweep.py
-python scripts/plot_policy_trajectories.py --cycle urban
+python scripts/plot_policy_trajectories.py --cycle epa_la92
 python scripts/train_dagger.py
 ```
 
@@ -109,8 +111,8 @@ results/experiment_report.md
 results/pareto_tradeoff.png
 results/safety_filter_sweep.csv
 results/safety_filter_sweep.png
-results/trajectory_comparison_urban.csv
-results/trajectory_comparison_urban.png
+results/trajectory_comparison_epa_la92.csv
+results/trajectory_comparison_epa_la92.png
 results/dagger_training_history.csv
 ```
 
@@ -150,7 +152,7 @@ Detailed notes:
 
 ## Cross-Cycle Benchmark
 
-The project also evaluates each policy on representative urban, highway and mixed demand profiles to check robustness beyond a single random cycle.
+The project also evaluates each policy on official EPA drive-cycle files. The default benchmark uses EPA LA92 Class 3 Heavy-Duty as the main dynamic profile and adds EPA US06, UDDS and HWFET as standardized comparison schedules.
 
 ![Cross-cycle benchmark](results/drive_cycle_benchmark.png)
 
@@ -170,9 +172,9 @@ The safety layer includes a parameter sweep for the target smoothing coefficient
 
 ## Trajectory Visualization
 
-The project also generates time-domain policy traces for explaining how the raw BC and safety-filtered BC controllers behave during a driving cycle.
+The project also generates time-domain policy traces for explaining how the raw BC and safety-filtered BC controllers behave on the EPA LA92 heavy-duty cycle.
 
-![Policy trajectory comparison](results/trajectory_comparison_urban.png)
+![Policy trajectory comparison](results/trajectory_comparison_epa_la92.png)
 
 ## Engineering Quality
 
@@ -190,11 +192,11 @@ The SAC path requires `stable-baselines3`. It is separated from the core pipelin
 
 **AI-based energy management for multi-stack fuel-cell hybrid vehicles**
 
-Built a Gymnasium simulation platform for a four-stack fuel-cell/battery hybrid system, implemented rule-based and HC-MPC-style expert baselines, generated expert demonstrations, trained a PyTorch behavior-cloning policy, and added a safety-filtered neural controller for SOC-aware action correction. Evaluated hydrogen consumption proxy, SOC stability, power tracking and start-stop behavior across random and representative driving cycles.
+Built a Gymnasium simulation platform for a four-stack fuel-cell/battery hybrid system, implemented rule-based and HC-MPC-style expert baselines, generated expert demonstrations, trained a PyTorch behavior-cloning policy, and added a safety-filtered neural controller for SOC-aware action correction. Evaluated hydrogen consumption proxy, SOC stability, power tracking and start-stop behavior across random episodes and official EPA drive cycles, including LA92 Class 3 Heavy-Duty.
 
 ## Roadmap
 
-- Replace the synthetic demand generator with standardized driving-cycle loaders.
+- Extend the standardized cycle set with NREL DriveCAT commercial-vehicle routes.
 - Add constrained SAC/DDPG fine-tuning and compare against behavior cloning and safety-filtered BC.
 - Add multi-objective Pareto analysis for hydrogen economy, SOC safety and SOH consistency.
 - Connect the Python AI policy back to the MATLAB simulation for higher-fidelity validation.

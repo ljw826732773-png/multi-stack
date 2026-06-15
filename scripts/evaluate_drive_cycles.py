@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "python"))
 
-from multistack_ai import EnvConfig, MultiStackFuelCellEnv, available_cycles, make_cycle_demand
+from multistack_ai import EnvConfig, MultiStackFuelCellEnv, available_cycles, cycle_label, make_cycle_demand
 from multistack_ai.evaluate import summarize
 from multistack_ai.policies import default_policy_suite
 
@@ -96,7 +96,7 @@ def draw_grouped_bars(draw, records, metric, box, title):
             bh = val / max_v * chart_h
             by = chart_y + chart_h - bh
             draw.rounded_rectangle((bx, by, bx + bar_w * 0.72, chart_y + chart_h), radius=4, fill=PALETTE[pi % len(PALETTE)])
-        label = cycle.title()
+        label = cycle_label(cycle)
         tw = draw.textlength(label, font=font(16, True))
         draw.text((gx + group_w / 2 - tw / 2, chart_y + chart_h + 12), label, fill=(45, 55, 70), font=font(16, True))
 
@@ -115,7 +115,7 @@ def plot(records):
     draw = ImageDraw.Draw(img)
     draw.rectangle((0, 0, 1500, 118), fill=(18, 62, 92))
     draw.text((55, 26), "Cross-Cycle EMS Benchmark", fill="white", font=font(40, True))
-    draw.text((58, 78), "Urban, highway and mixed demand profiles", fill=(214, 232, 245), font=font(21))
+    draw.text((58, 78), "EPA LA92 heavy-duty cycle plus EPA standard comparison schedules", fill=(214, 232, 245), font=font(21))
     draw_global_legend(draw)
     draw_grouped_bars(draw, records, "h2_proxy_kg", (45, 155, 735, 515), "Hydrogen Proxy")
     draw_grouped_bars(draw, records, "start_stop_count", (765, 155, 1455, 515), "Start-Stop Count")

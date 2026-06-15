@@ -1,6 +1,44 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
+
+ROOT = Path(__file__).resolve().parents[2]
+EPA_CYCLE_DIR = ROOT / "data" / "epa_cycles"
+MPH_TO_KPH = 1.609344
+
+EPA_CYCLES = {
+    "epa_la92": {
+        "file": "la92col.txt",
+        "label": "EPA LA92 HD",
+        "description": "EPA Class 3 Heavy-Duty LA92 chassis dynamometer schedule.",
+    },
+    "epa_us06": {
+        "file": "us06col.txt",
+        "label": "EPA US06",
+        "description": "EPA high-acceleration supplemental FTP schedule.",
+    },
+    "epa_udds": {
+        "file": "uddscol.txt",
+        "label": "EPA UDDS",
+        "description": "EPA stop-and-go urban dynamometer driving schedule.",
+    },
+    "epa_hwfet": {
+        "file": "hwycol.txt",
+        "label": "EPA HWFET",
+        "description": "EPA highway fuel-economy driving schedule.",
+    },
+}
+
+ALIASES = {
+    "la92": "epa_la92",
+    "class3_hd": "epa_la92",
+    "heavy_duty": "epa_la92",
+    "us06": "epa_us06",
+    "udds": "epa_udds",
+    "hwfet": "epa_hwfet",
+}
 
 
 def _interp_profile(points: list[tuple[float, float]], dt: float = 1.0) -> np.ndarray:
@@ -8,6 +46,53 @@ def _interp_profile(points: list[tuple[float, float]], dt: float = 1.0) -> np.nd
     speeds = np.array([p[1] for p in points], dtype=float)
     grid = np.arange(0.0, times[-1] + dt, dt)
     return np.interp(grid, times, speeds)
+
+
+def _parse_float_pair(line: str) -> tuple[float, float] | None:
+    clean = line.replace('"', " ").replace(",", " ")
+    parts = clean.split()
+    if len(parts) < 2:
+        return None
+    try:
+        return float(parts[0]), float(parts[1])
+    except ValueError:
+        return None
+
+
+def epa_speed_profile(name: str, dt: float = 1.0) -> np.ndarray:
+    """Load an EPA one-hertz speed trace and return speed in km/h."""
+
+    key = ALIASES.get(name.lower(), name.lower())
+    if key not in EPA_CYCLES:
+        raise ValueError(f"unknown EPA cycle: {name}")
+    path = EPA_CYCLE_DIR / EPA_CYCLES[key]["file"]
+    if not path.exists():
+        raise FileNotFoundError(f"missing EPA drive-cycle file: {path}")
+
+    raw = path.read_bytes()
+    if raw.startswith(b"\xff\xfe") or raw.startswith(b"\xfe\xff"):
+        text = raw.decode("utf-16")
+    else:
+        text = raw.decode("utf-8", errors="ignore")
+
+    rows: list[tuple[float, float]] = []
+    for line in text.splitlines():
+        pair = _parse_float_pair(line)
+        if pair is not None:
+            rows.append(pair)
+    if len(rows) < 2:
+        raise ValueError(f"EPA drive-cycle file has no usable time-speed data: {path}")
+
+    times = np.array([row[0] for row in rows], dtype=float)
+    speeds_mph = np.array([row[1] for row in rows], dtype=float)
+    order = np.argsort(times)
+    times = times[order]
+    speeds_mph = speeds_mph[order]
+    if dt == 1.0 and np.allclose(np.diff(times), 1.0):
+        return speeds_mph * MPH_TO_KPH
+
+    grid = np.arange(times[0], times[-1] + dt, dt)
+    return np.interp(grid, times, speeds_mph) * MPH_TO_KPH
 
 
 def urban_speed_profile(dt: float = 1.0) -> np.ndarray:
@@ -71,7 +156,17 @@ def speed_to_power(speed_kph: np.ndarray, mass_kg: float = 12000.0, dt: float = 
 
 def make_cycle_demand(name: str, dt: float = 1.0) -> np.ndarray:
     key = name.lower()
-    if key in {"urban", "city"}:
+    if key in EPA_CYCLES or key in ALIASES:
+        speed = epa_speed_profile(key, dt)
+    elif key == "epa_mixed":
+        speed = np.concatenate(
+            [
+                epa_speed_profile("epa_la92", dt)[:900],
+                epa_speed_profile("epa_hwfet", dt),
+                epa_speed_profile("epa_us06", dt),
+            ]
+        )
+    elif key in {"urban", "city"}:
         speed = urban_speed_profile(dt)
     elif key in {"highway", "hwfet"}:
         speed = highway_speed_profile(dt)
@@ -83,4 +178,13 @@ def make_cycle_demand(name: str, dt: float = 1.0) -> np.ndarray:
 
 
 def available_cycles() -> list[str]:
-    return ["urban", "highway", "mixed"]
+    return ["epa_la92", "epa_us06", "epa_udds", "epa_hwfet", "epa_mixed"]
+
+
+def cycle_label(name: str) -> str:
+    key = ALIASES.get(name.lower(), name.lower())
+    if key == "epa_mixed":
+        return "EPA Mixed"
+    if key in EPA_CYCLES:
+        return EPA_CYCLES[key]["label"]
+    return name.replace("_", " ").title()

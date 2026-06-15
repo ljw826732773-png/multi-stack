@@ -20,13 +20,13 @@ This report is generated from the latest benchmark CSV files.
 
 | policy | score | h2_proxy_kg | power_mae_kw | start_stop_count | soc_min |
 | --- | --- | --- | --- | --- | --- |
-| Sequential | 0.6699 | 0.8375 | 1.11 | 15.67 | 0.6500 |
-| BC Neural Policy | 0.6428 | 0.7018 | 14.18 | 16.67 | 0.6022 |
-| Safety-Filtered DAgger | 0.5337 | 0.7567 | 7.34 | 42.67 | 0.6276 |
-| Safety-Filtered BC | 0.5337 | 0.7567 | 7.34 | 42.67 | 0.6276 |
-| HC-MPC-style Expert | 0.5198 | 0.7409 | 9.68 | 42.00 | 0.6207 |
-| Equal | 0.5003 | 0.8373 | 1.10 | 44.00 | 0.6500 |
-| DAgger Policy | 0.5000 | 0.6986 | 21.93 | 10.67 | 0.5740 |
+| Sequential | 0.5743 | 1.3082 | 10.95 | 236.00 | 0.6498 |
+| Safety-Filtered DAgger | 0.5404 | 1.1873 | 35.96 | 118.80 | 0.6423 |
+| Safety-Filtered BC | 0.5402 | 1.1873 | 35.96 | 119.20 | 0.6423 |
+| BC Neural Policy | 0.5383 | 0.8990 | 50.22 | 58.60 | 0.5566 |
+| HC-MPC-style Expert | 0.5035 | 1.1390 | 47.22 | 79.40 | 0.6316 |
+| Equal | 0.5007 | 1.3071 | 9.04 | 384.00 | 0.6500 |
+| DAgger Policy | 0.5000 | 0.8096 | 54.39 | 44.40 | 0.5031 |
 
 ## Key Observations
 

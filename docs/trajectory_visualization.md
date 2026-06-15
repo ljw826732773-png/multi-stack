@@ -5,17 +5,17 @@ Aggregate metrics are useful, but they do not show how a policy behaves over tim
 Run:
 
 ```bash
-python scripts/plot_policy_trajectories.py --cycle urban
+python scripts/plot_policy_trajectories.py --cycle epa_la92
 ```
 
 Outputs:
 
 ```text
-results/trajectory_comparison_urban.png
-results/trajectory_comparison_urban.csv
+results/trajectory_comparison_epa_la92.png
+results/trajectory_comparison_epa_la92.csv
 ```
 
-![Policy trajectory comparison](../results/trajectory_comparison_urban.png)
+![Policy trajectory comparison](../results/trajectory_comparison_epa_la92.png)
 
 ## What The Figure Shows
 
