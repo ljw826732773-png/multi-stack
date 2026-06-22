@@ -20,6 +20,7 @@ def main():
     policies = default_policy_suite(
         ROOT / "results" / "bc_policy.pt",
         ROOT / "results" / "dagger_policy.pt",
+        ROOT / "results" / "sequence_bc_policy.pt",
     )
 
     out = ROOT / "results" / "policy_comparison.csv"

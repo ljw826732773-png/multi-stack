@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from .bc import BCPolicy
+from .bc import BCPolicy, SequenceBCPolicy
 from .expert import HealthAwareExpert
 from .safety import SafetyFilteredPolicy
 
@@ -41,9 +41,24 @@ class TorchPolicy:
         return self.model.act(obs).astype(np.float32)
 
 
+class SequenceTorchPolicy:
+    def __init__(self, path: str | Path):
+        ckpt = torch.load(path, map_location="cpu")
+        self.model = SequenceBCPolicy(hidden=int(ckpt.get("hidden", 96)))
+        self.model.load_state_dict(ckpt["state_dict"])
+        self.model.eval()
+
+    def reset(self):
+        self.model.reset()
+
+    def act(self, obs):
+        return self.model.act(obs).astype(np.float32)
+
+
 def default_policy_suite(
     model_path: str | Path | None = None,
     dagger_model_path: str | Path | None = None,
+    sequence_model_path: str | Path | None = None,
 ):
     policies = {
         "Equal": EqualPolicy(),
@@ -57,4 +72,7 @@ def default_policy_suite(
     if dagger_model_path is not None and Path(dagger_model_path).exists():
         policies["DAgger Policy"] = TorchPolicy(dagger_model_path)
         policies["Safety-Filtered DAgger"] = SafetyFilteredPolicy(TorchPolicy(dagger_model_path))
+    if sequence_model_path is not None and Path(sequence_model_path).exists():
+        policies["GRU Sequence BC"] = SequenceTorchPolicy(sequence_model_path)
+        policies["Safety-Filtered GRU"] = SafetyFilteredPolicy(SequenceTorchPolicy(sequence_model_path))
     return policies

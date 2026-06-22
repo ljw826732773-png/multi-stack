@@ -217,7 +217,9 @@ def write_report(policy_rows, cycle_rows):
         f"- Highest SOC margin: **{best_soc['policy']}** (minimum SOC {to_float(best_soc, 'soc_min'):.4f}).",
         f"- Fewest start-stop events: **{best_start['policy']}** ({to_float(best_start, 'start_stop_count'):.2f}).",
         "",
-        "The safety-filtered neural policy improves the raw BC policy's tracking and SOC robustness by injecting interpretable engineering constraints. The remaining trade-off is that stronger safety correction asks the fuel-cell stacks to carry more power, which can increase the hydrogen proxy relative to the raw neural policy.",
+        "The raw neural policies expose a useful learning-control trade-off: they can reduce hydrogen proxy or start-stop events, but they may leave too much compensation to the battery on difficult cycles. The GRU sequence policy is especially smooth, reaching the lowest start-stop count in the random benchmark, but its cross-cycle SOC margin is weaker without correction.",
+        "",
+        "The safety-filtered variants improve deployment robustness by injecting interpretable SOC and stack-limit constraints around the learned controllers. This is why the safety-filtered BC, DAgger and GRU policies cluster together: the neural policy supplies the nominal dispatch style, while the safety layer enforces engineering feasibility.",
     ]
     REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
 

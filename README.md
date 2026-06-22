@@ -14,7 +14,8 @@ Current strategy ladder:
 4. **Behavior cloning neural policy**: learns the expert state-action mapping with PyTorch.
 5. **Safety-filtered neural policy**: wraps the learned policy with SOC and stack-derating constraints.
 6. **DAgger imitation learning**: reduces behavior-cloning distribution shift through learner-state data aggregation.
-7. **Optional SAC fine-tuning**: a reinforcement-learning entrypoint for future improvement.
+7. **GRU sequence behavior cloning**: learns history-dependent dispatch patterns from expert trajectories.
+8. **Optional SAC fine-tuning**: a reinforcement-learning entrypoint for future improvement.
 
 ## Highlights
 
@@ -24,6 +25,7 @@ Current strategy ladder:
 - Trained a neural policy to approximate stack power allocation.
 - Added a safety-filtered neural controller that improves SOC robustness and power tracking without retraining.
 - Added a DAgger-style data aggregation loop for deeper imitation-learning research.
+- Added a GRU sequence imitation baseline to capture history-dependent EMS behavior.
 - Replaced the default synthetic cycle benchmark with official EPA drive schedules, led by LA92 Class 3 Heavy-Duty.
 - Added a sensitivity study for expert-controller parameters: filter coefficient, SOC feedback gain and health-aware allocation exponent.
 - Evaluated strategies using hydrogen proxy, SOC range, SOH variance, tracking error and start-stop count.
@@ -86,6 +88,7 @@ python scripts/generate_experiment_report.py
 python scripts/safety_filter_sweep.py
 python scripts/plot_policy_trajectories.py --cycle epa_la92
 python scripts/train_dagger.py
+python scripts/train_sequence_bc.py --epochs 8 --seq-len 32 --stride 8
 ```
 
 If `results/dagger_policy.pt` exists after running `train_dagger.py`, the evaluation scripts automatically include DAgger and Safety-Filtered DAgger in the comparison.
@@ -114,6 +117,7 @@ results/safety_filter_sweep.png
 results/trajectory_comparison_epa_la92.csv
 results/trajectory_comparison_epa_la92.png
 results/dagger_training_history.csv
+results/sequence_bc_training_history.csv
 ```
 
 ## Initial Benchmark
@@ -147,6 +151,7 @@ Detailed notes:
 - [Safety filter parameter sweep](docs/safety_filter_sweep.md)
 - [Policy trajectory visualization](docs/trajectory_visualization.md)
 - [DAgger imitation learning](docs/dagger_imitation.md)
+- [GRU sequence behavior cloning](docs/sequence_bc.md)
 - [Methodology](docs/methodology.md)
 - [Resume and roadmap](docs/resume_and_roadmap.md)
 
@@ -192,7 +197,7 @@ The SAC path requires `stable-baselines3`. It is separated from the core pipelin
 
 **AI-based energy management for multi-stack fuel-cell hybrid vehicles**
 
-Built a Gymnasium simulation platform for a four-stack fuel-cell/battery hybrid system, implemented rule-based and HC-MPC-style expert baselines, generated expert demonstrations, trained a PyTorch behavior-cloning policy, and added a safety-filtered neural controller for SOC-aware action correction. Evaluated hydrogen consumption proxy, SOC stability, power tracking and start-stop behavior across random episodes and official EPA drive cycles, including LA92 Class 3 Heavy-Duty.
+Built a Gymnasium simulation platform for a four-stack fuel-cell/battery hybrid system, implemented rule-based and HC-MPC-style expert baselines, generated expert demonstrations, trained MLP and GRU behavior-cloning policies, and added a safety-filtered neural controller for SOC-aware action correction. Evaluated hydrogen consumption proxy, SOC stability, power tracking and start-stop behavior across random episodes and official EPA drive cycles, including LA92 Class 3 Heavy-Duty.
 
 ## Roadmap
 

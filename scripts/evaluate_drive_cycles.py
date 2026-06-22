@@ -24,6 +24,8 @@ PALETTE = [
     (213, 88, 93),
     (50, 171, 168),
     (166, 113, 44),
+    (120, 145, 76),
+    (186, 82, 150),
 ]
 
 
@@ -56,6 +58,7 @@ def evaluate():
     policies = default_policy_suite(
         ROOT / "results" / "bc_policy.pt",
         ROOT / "results" / "dagger_policy.pt",
+        ROOT / "results" / "sequence_bc_policy.pt",
     )
     records = []
     for cycle in available_cycles():
@@ -102,10 +105,12 @@ def draw_grouped_bars(draw, records, metric, box, title):
 
 
 def draw_global_legend(draw):
-    labels = ["Equal", "Sequential", "Expert", "BC Neural", "Safety BC", "DAgger", "Safety DAgger"]
-    lx = 980
+    labels = ["Equal", "Sequential", "Expert", "BC Neural", "Safety BC", "DAgger", "Safety DAgger", "GRU BC", "Safety GRU"]
     for i, label in enumerate(labels):
-        y = 14 + i * 15
+        col = i // 5
+        row = i % 5
+        lx = 970 + col * 178
+        y = 14 + row * 20
         draw.rounded_rectangle((lx, y, lx + 13, y + 13), radius=3, fill=PALETTE[i])
         draw.text((lx + 20, y - 4), label, fill=(226, 238, 248), font=font(13))
 

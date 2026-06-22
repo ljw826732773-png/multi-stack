@@ -33,6 +33,8 @@ def short_name(name: str) -> str:
         "Safety-Filtered BC": "Safety\nFiltered BC",
         "DAgger Policy": "DAgger\nPolicy",
         "Safety-Filtered DAgger": "Safety\nDAgger",
+        "GRU Sequence BC": "GRU\nSequence BC",
+        "Safety-Filtered GRU": "Safety\nGRU",
     }
     return mapping.get(name, name)
 

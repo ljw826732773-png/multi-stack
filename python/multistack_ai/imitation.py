@@ -70,6 +70,26 @@ def split_dataset(x, y, val_fraction: float = 0.15, seed: int = 7):
     return x[train_idx], x[val_idx], y[train_idx], y[val_idx]
 
 
+def make_sequence_dataset(x, y, episode_len: int = 1200, seq_len: int = 32, stride: int = 8):
+    """Build rolling windows from contiguous expert trajectories."""
+
+    x = np.asarray(x, dtype=np.float32)
+    y = np.asarray(y, dtype=np.float32)
+    n_episodes = len(x) // episode_len
+    if n_episodes < 1:
+        raise ValueError("dataset is shorter than one episode")
+    xs, ys = [], []
+    for ep in range(n_episodes):
+        start = ep * episode_len
+        end = start + episode_len
+        ep_x = x[start:end]
+        ep_y = y[start:end]
+        for offset in range(0, episode_len - seq_len + 1, stride):
+            xs.append(ep_x[offset : offset + seq_len])
+            ys.append(ep_y[offset : offset + seq_len])
+    return np.asarray(xs, dtype=np.float32), np.asarray(ys, dtype=np.float32)
+
+
 def train_bc_model(
     x,
     y,

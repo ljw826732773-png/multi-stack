@@ -30,3 +30,4 @@ Thumbs.db
 !results/trajectory_comparison_epa_la92.csv
 !results/trajectory_comparison_epa_la92.png
 !results/dagger_training_history.csv
+!results/sequence_bc_training_history.csv
