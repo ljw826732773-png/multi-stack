@@ -154,6 +154,7 @@ Detailed notes:
 - [Policy trajectory visualization](docs/trajectory_visualization.md)
 - [DAgger imitation learning](docs/dagger_imitation.md)
 - [GRU sequence behavior cloning](docs/sequence_bc.md)
+- [Sequence data ablation](docs/sequence_data_ablation.md)
 - [Methodology](docs/methodology.md)
 - [Resume and roadmap](docs/resume_and_roadmap.md)
 
@@ -170,6 +171,12 @@ The repository can automatically summarize the latest benchmark CSV files into a
 ![Policy trade-off map](results/pareto_tradeoff.png)
 
 See [results/experiment_report.md](results/experiment_report.md) for the generated report.
+
+## Sequence Data Ablation
+
+The GRU policy includes a data-source ablation that compares random expert data, EPA-cycle expert data and mixed training.
+
+![Sequence data ablation](results/sequence_data_ablation.png)
 
 ## Safety Filter Sweep
 

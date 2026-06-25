@@ -31,3 +31,5 @@ Thumbs.db
 !results/trajectory_comparison_epa_la92.png
 !results/dagger_training_history.csv
 !results/sequence_bc_training_history.csv
+!results/sequence_data_ablation.csv
+!results/sequence_data_ablation.png
