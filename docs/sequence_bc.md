@@ -11,17 +11,19 @@ The original MLP behavior-cloning policy treats each control step as an independ
 Run:
 
 ```bash
-python scripts/train_sequence_bc.py --epochs 8 --seq-len 32 --stride 8
+python scripts/generate_cycle_expert_dataset.py --repeat 2
+python scripts/train_sequence_bc.py --data results/expert_dataset.npz results/epa_expert_dataset.npz --epochs 10 --seq-len 32 --stride 8
 ```
 
 Generated files:
 
 ```text
+results/epa_expert_dataset.npz
 results/sequence_bc_policy.pt
 results/sequence_bc_training_history.csv
 ```
 
-The script slices the expert demonstration dataset into rolling windows. The model predicts the expert stack-power action at every step in the window, not only at the final step. This makes the recurrent model learn both local action mapping and short-horizon temporal consistency.
+The EPA expert dataset records HC-MPC-style expert trajectories on LA92, US06, UDDS, HWFET and the mixed EPA profile. The training script then combines the original random expert data with the EPA-cycle expert data and slices both sources into rolling windows. The model predicts the expert stack-power action at every step in the window, not only at the final step. This makes the recurrent model learn both local action mapping and short-horizon temporal consistency.
 
 ## Evaluation
 
@@ -34,4 +36,4 @@ The first result is intentionally left as a raw learned controller. The second w
 
 ## Current Interpretation
 
-In the latest benchmark, the raw GRU policy strongly reduces stack start-stop events, but it can allow deeper SOC drawdown on aggressive EPA cycles. The safety-filtered GRU restores SOC margin and tracking behavior while preserving the recurrent policy as the base controller. This is a realistic research outcome: a sequence model captures smoother dispatch behavior, but safety constraints are still needed for deployment-grade EMS control.
+The first GRU model trained only on random expert episodes was smooth but weak on some aggressive EPA cycles. After adding EPA-cycle expert trajectories to the training set, the raw GRU policy keeps its very low start-stop count while its cross-cycle SOC margin improves sharply. The remaining trade-off is tracking error: the recurrent policy tends to smooth stack dispatch, so the safety-filtered GRU variant remains the more deployment-oriented controller.

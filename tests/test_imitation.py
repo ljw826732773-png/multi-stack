@@ -39,3 +39,14 @@ def test_sequence_dataset_and_gru_policy_act():
 
     assert action.shape == (4,)
     assert ((action >= 0.0) & (action <= 1.0)).all()
+
+
+def test_sequence_dataset_accepts_variable_episode_lengths():
+    x, y = collect_expert_data(episodes=1, seed=50, episode_len=12)
+    x = x[:10]
+    y = y[:10]
+
+    seq_x, seq_y = make_sequence_dataset(x, y, episode_lengths=[6, 4], seq_len=3, stride=2)
+
+    assert seq_x.shape == (3, 3, 11)
+    assert seq_y.shape == (3, 3, 4)

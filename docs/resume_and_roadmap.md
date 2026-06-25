@@ -5,7 +5,7 @@
 - Built a Gymnasium-based multi-stack fuel-cell hybrid energy management environment with SOC dynamics, stack SOH degradation, start-stop penalties and ramp-rate constraints.
 - Designed a health-aware HC-MPC-style expert controller for asymmetric stack power allocation and lifetime-aware load shifting.
 - Generated expert demonstrations and trained a PyTorch behavior cloning policy to approximate continuous stack power allocation.
-- Added a GRU sequence-imitation policy to model history-dependent dispatch behavior under ramp-rate and SOC dynamics.
+- Added a GRU sequence-imitation policy trained on mixed random and EPA-cycle expert data to model history-dependent dispatch behavior under ramp-rate and SOC dynamics.
 - Compared equal allocation, sequential loading, expert control and neural policy using hydrogen consumption proxy, SOC range, SOH variance, power tracking error and start-stop count.
 - Prepared an optional SAC reinforcement-learning entrypoint for future policy fine-tuning under multi-objective rewards.
 
@@ -13,7 +13,7 @@
 
 This project starts from a conventional multi-stack fuel-cell EMS simulation and extends it into an AI control platform. The original control objective is not only to meet vehicle power demand, but also to reduce hydrogen consumption and improve lifetime consistency among stacks with different initial SOH.
 
-The AI extension uses the HC-MPC-style controller as an expert. A neural policy first learns the expert state-action mapping through behavior cloning, which gives a stable initialization. The project now includes both a single-step MLP policy and a GRU sequence policy, making it possible to discuss why temporal memory helps smooth stack dispatch but still needs explicit safety correction. Reinforcement learning can then be used as a second stage to fine-tune the policy for better trade-offs among hydrogen economy, SOC stability and SOH balancing.
+The AI extension uses the HC-MPC-style controller as an expert. A neural policy first learns the expert state-action mapping through behavior cloning, which gives a stable initialization. The project now includes both a single-step MLP policy and a GRU sequence policy. The GRU path also shows a useful data story: adding EPA-cycle expert trajectories improves cross-cycle SOC generalization, while the recurrent policy still tends to smooth stack dispatch and benefits from explicit safety correction. Reinforcement learning can then be used as a second stage to fine-tune the policy for better trade-offs among hydrogen economy, SOC stability and SOH balancing.
 
 ## Near-Term Roadmap
 
@@ -23,7 +23,7 @@ The AI extension uses the HC-MPC-style controller as an expert. A neural policy 
 
 2. **Sequence-model refinement**
    - Compare GRU, temporal CNN and small Transformer policies.
-   - Train on EPA cycle rollouts as well as random expert trajectories.
+   - Compare random-only training with mixed random/EPA expert training.
    - Add ablations for sequence length and rollout horizon.
 
 3. **SAC fine-tuning**

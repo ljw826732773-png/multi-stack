@@ -32,4 +32,4 @@ The reward penalizes hydrogen consumption proxy, SOC deviation, SOH variance, st
 
 ## Sequence Learning Extension
 
-The GRU policy uses the same observation and action definitions, but it keeps a recurrent hidden state during rollout. Training uses rolling windows from expert trajectories, so the model learns short-horizon temporal consistency instead of treating each sample as independent. This is useful for EMS control because stack ramping, SOC drift and previous power allocation all carry information across time.
+The GRU policy uses the same observation and action definitions, but it keeps a recurrent hidden state during rollout. Training uses rolling windows from both random expert trajectories and EPA-cycle expert trajectories, so the model learns short-horizon temporal consistency instead of treating each sample as independent. This is useful for EMS control because stack ramping, SOC drift and previous power allocation all carry information across time. Adding EPA-cycle expert data also reduces the distribution shift between random training episodes and standardized drive-cycle evaluation.

@@ -70,23 +70,45 @@ def split_dataset(x, y, val_fraction: float = 0.15, seed: int = 7):
     return x[train_idx], x[val_idx], y[train_idx], y[val_idx]
 
 
-def make_sequence_dataset(x, y, episode_len: int = 1200, seq_len: int = 32, stride: int = 8):
+def make_sequence_dataset(
+    x,
+    y,
+    episode_len: int | None = 1200,
+    seq_len: int = 32,
+    stride: int = 8,
+    episode_lengths: list[int] | np.ndarray | None = None,
+):
     """Build rolling windows from contiguous expert trajectories."""
 
     x = np.asarray(x, dtype=np.float32)
     y = np.asarray(y, dtype=np.float32)
-    n_episodes = len(x) // episode_len
-    if n_episodes < 1:
-        raise ValueError("dataset is shorter than one episode")
+    if episode_lengths is None:
+        if episode_len is None:
+            raise ValueError("episode_len is required when episode_lengths is not provided")
+        n_episodes = len(x) // episode_len
+        if n_episodes < 1:
+            raise ValueError("dataset is shorter than one episode")
+        episode_lengths = np.full(n_episodes, episode_len, dtype=int)
+    else:
+        episode_lengths = np.asarray(episode_lengths, dtype=int)
+        if int(np.sum(episode_lengths)) > len(x):
+            raise ValueError("episode_lengths exceed dataset length")
+
     xs, ys = [], []
-    for ep in range(n_episodes):
-        start = ep * episode_len
-        end = start + episode_len
+    start = 0
+    for length in episode_lengths:
+        end = start + int(length)
         ep_x = x[start:end]
         ep_y = y[start:end]
-        for offset in range(0, episode_len - seq_len + 1, stride):
+        if len(ep_x) < seq_len:
+            start = end
+            continue
+        for offset in range(0, len(ep_x) - seq_len + 1, stride):
             xs.append(ep_x[offset : offset + seq_len])
             ys.append(ep_y[offset : offset + seq_len])
+        start = end
+    if not xs:
+        raise ValueError("no sequence windows could be built")
     return np.asarray(xs, dtype=np.float32), np.asarray(ys, dtype=np.float32)
 
 

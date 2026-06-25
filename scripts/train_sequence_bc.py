@@ -16,7 +16,7 @@ from multistack_ai.imitation import make_sequence_dataset, split_dataset
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data", type=Path, default=ROOT / "results" / "expert_dataset.npz")
+    parser.add_argument("--data", type=Path, nargs="+", default=[ROOT / "results" / "expert_dataset.npz"])
     parser.add_argument("--episode-len", type=int, default=1200)
     parser.add_argument("--seq-len", type=int, default=32)
     parser.add_argument("--stride", type=int, default=8)
@@ -28,14 +28,23 @@ def main():
     parser.add_argument("--history", type=Path, default=ROOT / "results" / "sequence_bc_training_history.csv")
     args = parser.parse_args()
 
-    data = np.load(args.data)
-    seq_x, seq_y = make_sequence_dataset(
-        data["X"],
-        data["Y"],
-        episode_len=args.episode_len,
-        seq_len=args.seq_len,
-        stride=args.stride,
-    )
+    seq_parts_x, seq_parts_y = [], []
+    for data_path in args.data:
+        data = np.load(data_path)
+        episode_lengths = data["episode_lengths"] if "episode_lengths" in data.files else None
+        seq_x, seq_y = make_sequence_dataset(
+            data["X"],
+            data["Y"],
+            episode_len=args.episode_len,
+            seq_len=args.seq_len,
+            stride=args.stride,
+            episode_lengths=episode_lengths,
+        )
+        seq_parts_x.append(seq_x)
+        seq_parts_y.append(seq_y)
+        print(f"loaded {data_path} -> {len(seq_x)} sequence windows")
+    seq_x = np.concatenate(seq_parts_x).astype(np.float32)
+    seq_y = np.concatenate(seq_parts_y).astype(np.float32)
     x_train, x_val, y_train, y_val = split_dataset(seq_x, seq_y, seed=17)
     loader = DataLoader(
         TensorDataset(torch.tensor(x_train), torch.tensor(y_train)),
@@ -73,6 +82,7 @@ def main():
             "hidden": args.hidden,
             "seq_len": args.seq_len,
             "stride": args.stride,
+            "sources": [str(path) for path in args.data],
         },
         args.out,
     )

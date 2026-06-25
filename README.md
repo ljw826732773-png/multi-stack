@@ -25,7 +25,7 @@ Current strategy ladder:
 - Trained a neural policy to approximate stack power allocation.
 - Added a safety-filtered neural controller that improves SOC robustness and power tracking without retraining.
 - Added a DAgger-style data aggregation loop for deeper imitation-learning research.
-- Added a GRU sequence imitation baseline to capture history-dependent EMS behavior.
+- Added a GRU sequence imitation baseline trained with mixed random and EPA-cycle expert data to capture history-dependent EMS behavior.
 - Replaced the default synthetic cycle benchmark with official EPA drive schedules, led by LA92 Class 3 Heavy-Duty.
 - Added a sensitivity study for expert-controller parameters: filter coefficient, SOC feedback gain and health-aware allocation exponent.
 - Evaluated strategies using hydrogen proxy, SOC range, SOH variance, tracking error and start-stop count.
@@ -54,6 +54,7 @@ The neural policy is trained through behavior cloning:
 ```text
 HC-MPC-style expert trajectories -> supervised dataset -> PyTorch MLP policy
 learner rollouts -> expert relabeling -> aggregated DAgger dataset
+random + EPA expert trajectories -> rolling windows -> GRU sequence policy
 ```
 
 This creates a stable AI baseline before adding SAC or constrained RL.
@@ -88,7 +89,8 @@ python scripts/generate_experiment_report.py
 python scripts/safety_filter_sweep.py
 python scripts/plot_policy_trajectories.py --cycle epa_la92
 python scripts/train_dagger.py
-python scripts/train_sequence_bc.py --epochs 8 --seq-len 32 --stride 8
+python scripts/generate_cycle_expert_dataset.py --repeat 2
+python scripts/train_sequence_bc.py --data results/expert_dataset.npz results/epa_expert_dataset.npz --epochs 10 --seq-len 32 --stride 8
 ```
 
 If `results/dagger_policy.pt` exists after running `train_dagger.py`, the evaluation scripts automatically include DAgger and Safety-Filtered DAgger in the comparison.
