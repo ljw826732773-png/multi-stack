@@ -155,6 +155,7 @@ Detailed notes:
 - [DAgger imitation learning](docs/dagger_imitation.md)
 - [GRU sequence behavior cloning](docs/sequence_bc.md)
 - [Sequence data ablation](docs/sequence_data_ablation.md)
+- [Robustness stress test](docs/robustness_stress_test.md)
 - [Methodology](docs/methodology.md)
 - [Resume and roadmap](docs/resume_and_roadmap.md)
 
@@ -177,6 +178,12 @@ See [results/experiment_report.md](results/experiment_report.md) for the generat
 The GRU policy includes a data-source ablation that compares random expert data, EPA-cycle expert data and mixed training.
 
 ![Sequence data ablation](results/sequence_data_ablation.png)
+
+## Robustness Stress Test
+
+The benchmark suite also checks robustness under payload, battery-capacity, initial-SOC, demand-scaling and compound disturbances.
+
+![Robustness stress test](results/robustness_stress_test.png)
 
 ## Safety Filter Sweep
 
